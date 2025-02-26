@@ -22,6 +22,7 @@ public class Aplicacao {
                 case 3 -> cadastrar();
                 case 4 -> atualizar();
                 case 5 -> deletar();
+                default -> System.out.println("Opção inválida"); 
             }
         } while (opcao != 0);
     }

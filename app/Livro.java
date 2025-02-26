@@ -1,37 +1,36 @@
 package app;
 
 import java.util.Date;
-import java.util.List;
 
 public class Livro {
     // Campos obrigatórios
-    private String nome;
+    private String titulo;
     private String autor;
     private Date dataPublicacao;
     // Campos opcionais
-    private int numeroPaginas;
+    private int qtdPaginas;
     private String idioma;
-    private List<String> generos;
+    private String editora;
     
-    public Livro(String nome, String autor, Date dataPublicacao) {
-        this.nome = nome;
+    public Livro(String titulo, String autor, Date dataPublicacao) {
+        this.titulo = titulo;
         this.autor = autor;
         this.dataPublicacao = dataPublicacao;
     }
-    public Livro(String nome, String autor, Date dataPublicacao, int numeroPaginas, String idioma, List<String> generos) {
-        this.nome = nome;
+    public Livro(String titulo, String autor, Date dataPublicacao, int qtdPaginas, String idioma, String editora) {
+        this.titulo = titulo;
         this.autor = autor;
         this.dataPublicacao = dataPublicacao;
-        this.numeroPaginas = numeroPaginas;
+        this.qtdPaginas = qtdPaginas;
         this.idioma = idioma;
-        this.generos = generos;
+        this.editora = editora;
     }
 
-    public String getNome() {
-        return nome;
+    public String getTitulo() {
+        return titulo;
     }
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
     public String getAutor() {
         return autor;
@@ -45,11 +44,11 @@ public class Livro {
     public void setDataPublicacao(Date dataPublicacao) {
         this.dataPublicacao = dataPublicacao;
     }
-    public int getNumeroPaginas() {
-        return numeroPaginas;
+    public int getQtdPaginas() {
+        return qtdPaginas;
     }
-    public void setNumeroPaginas(int numeroPaginas) {
-        this.numeroPaginas = numeroPaginas;
+    public void setQtdPaginas(int qtdPaginas) {
+        this.qtdPaginas = qtdPaginas;
     }
     public String getIdioma() {
         return idioma;
@@ -57,10 +56,10 @@ public class Livro {
     public void setIdioma(String idioma) {
         this.idioma = idioma;
     }
-    public List<String> getGeneros() {
-        return generos;
+    public String getEditora() {
+        return editora;
     }
-    public void setGeneros(List<String> generos) {
-        this.generos = generos;
+    public void setEditora(String editora) {
+        this.editora = editora;
     }
 }
