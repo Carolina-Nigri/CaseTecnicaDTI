@@ -14,11 +14,14 @@ public class Livro {
     private String idioma;
     private String editora;
     
-    public Livro(int id, String titulo, String autor, Date dataPublicacao) {
-        this.id = id;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.dataPublicacao = dataPublicacao;
+    public Livro() {
+        this.id = -1;
+        this.titulo = "";
+        this.autor = "";
+        this.dataPublicacao = null;
+        this.qtdPaginas = 0;
+        this.idioma = "";
+        this.editora = "";
     }
     public Livro(int id, String titulo, String autor, Date dataPublicacao, int qtdPaginas, String idioma, String editora) {
         this.id = id;
@@ -30,6 +33,12 @@ public class Livro {
         this.editora = editora;
     }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getTitulo() {
         return titulo;
     }
@@ -69,9 +78,9 @@ public class Livro {
 
     @Override
     public String toString() {
-        SimpleDateFormat formattter = new SimpleDateFormat("YYYY-MM-DD");
-        String data = formattter.format(this.dataPublicacao);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String data = formatter.format(this.dataPublicacao);
 
-        return this.id + " | " + this.titulo + " | " + this.autor + " | " + data;
+        return this.id + " | " + this.titulo + " | " + this.autor + " | " + data + " | " + this.qtdPaginas + " págs. | " + (this.idioma == null ? "Idioma desconhecido" : this.idioma) + " | " + (this.editora == null ? "Editora desconhecida" : this.editora);
     }
 }

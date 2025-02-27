@@ -3,6 +3,8 @@ package src.app;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import src.dao.LivroDAO;
 import src.model.Livro;
@@ -21,7 +23,7 @@ public class Aplicacao {
             }
         
             switch (opcao) {
-                case 0 -> System.out.println("Fechando...");
+                case 0 -> System.out.println("\nFechando...");
                 case 1 -> listar(database);
                 case 2 -> buscar(database);
                 case 3 -> cadastrar(database);
@@ -58,17 +60,65 @@ public class Aplicacao {
 
     public static void listar(LivroDAO database) {
         List<Livro> livros = database.selectAll();
-        
-        if(livros.isEmpty()) System.out.println("Nenhum livro foi registrado ainda.\n");
-        else System.out.println(livros + "\n");
+               
+        if(livros.isEmpty()){
+            System.out.println("Nenhum livro foi registrado ainda.\n");
+        } else {
+            System.out.println("");
+            livros.forEach(livro -> System.out.println(livro));
+            System.out.println("");
+        }
     }
 
     public static void buscar(LivroDAO database) {
+        System.out.print("\nID do livro: ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int id = -1;
+        
+        try {
+            id = Integer.parseInt(br.readLine());
+        } catch (IOException ioe) {
+            System.err.println("Erro ao ler ID do livro\n");
+        }
 
+        Livro livro = database.select(id);
+        System.out.println( (livro == null ? "Livro não encontrado" : livro) + "\n");
     }
 
     public static void cadastrar(LivroDAO database) {
+        Livro livro = new Livro();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        try {
+            System.out.print("\nTitulo: ");
+            livro.setTitulo(br.readLine());
 
+            System.out.print("Autor: ");
+            livro.setAutor(br.readLine());
+
+            System.out.print("Data de publicação: ");
+            livro.setDataPublicacao(formatter.parse(br.readLine()));
+            
+            System.out.print("Qtd de págs.: ");
+            livro.setQtdPaginas(Integer.parseInt(br.readLine()));
+    
+            System.out.print("Idioma: ");
+            livro.setIdioma(br.readLine());
+
+            System.out.print("Editora: ");
+            livro.setEditora(br.readLine());
+
+            if(database.insert(livro))
+                System.out.println("\nLivro registrado com sucesso:\n" + livro + "\n");
+            else
+                System.out.println("Erro ao registrar livro.\n");
+
+        } catch (IOException ioe) {
+            System.err.println("Erro ao ler ID do livro.\n");
+        } catch (ParseException pe) {
+            System.err.println("Erro ao fazer parse da data.\n");
+        }            
     }
 
     public static void atualizar(LivroDAO database) {

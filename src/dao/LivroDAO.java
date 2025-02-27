@@ -1,5 +1,6 @@
 package src.dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,8 +11,6 @@ import java.util.List;
 import src.model.Livro;
 
 public class LivroDAO extends DAO {
-    private final String TABELA = "Livros";
-
     public LivroDAO() {
         super();
         init();
@@ -29,7 +28,7 @@ public class LivroDAO extends DAO {
 
     public boolean create() {
         boolean status = false;
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABELA + "(" +
+        String sql = "CREATE TABLE IF NOT EXISTS Livros (" +
                      "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                      "titulo VARCHAR(70) NOT NULL," +
                      "autor VARCHAR(70) NOT NULL," +
@@ -51,15 +50,15 @@ public class LivroDAO extends DAO {
 
     public List<Livro> selectAll() {
         List<Livro> livros = new ArrayList<>();
-        String sql = "SELECT * FROM " + TABELA;
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+        String sql = "SELECT * FROM Livros";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             Statement stmt = conexao.createStatement();
             ResultSet rs = stmt.executeQuery(sql);	
 	        
             while(rs.next()){            
-	        	Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), format.parse(rs.getString("dataPublicacao")) );
+	        	Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
                 livros.add(livro);
             }
 
@@ -72,21 +71,70 @@ public class LivroDAO extends DAO {
 
         return livros;
     }
+
+    public Livro select(int id) {
+        Livro livro = null;
+        String sql = "SELECT * FROM Livros WHERE id = " + id;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            Statement stmt = conexao.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);	
+	        
+            if(rs.next()){            
+	        	livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
+            }
+
+            stmt.close();
+        } catch (SQLException sqle) {
+            System.err.println(sqle.getMessage());
+        } catch (ParseException pe) {
+            System.err.println(pe.getMessage());
+        }
+
+        return livro;
+    }
+
     public boolean insert(Livro livro) {
         boolean status = false;
+        String sql = "INSERT INTO Livros (titulo, autor, dataPublicacao, qtdPaginas, idioma, editora) " +
+                     "VALUES (?, ?, ?, ?, ?, ?);";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            
+            stmt.setString(1, livro.getTitulo());
+            stmt.setString(2, livro.getAutor());
+            stmt.setString(3, formatter.format(livro.getDataPublicacao()));
+            stmt.setInt(4, livro.getQtdPaginas());
+            stmt.setString(5, livro.getIdioma());
+            stmt.setString(6, livro.getEditora());
+
+            int colunasAlteradas = stmt.executeUpdate();	
+            if(colunasAlteradas > 0) {
+                ResultSet idCriado = stmt.getGeneratedKeys();
+
+                if(idCriado.next()) {
+                    livro.setId(idCriado.getInt(1));
+                    status = true;
+                }
+            }
+
+            stmt.close();
+        } catch (SQLException sqle) {
+            System.err.println(sqle.getMessage());
+        }
 
         return status;
     }
-    public boolean select(int id) {
-        boolean status = false;
-
-        return status;
-    }
+ 
     public boolean update(Livro livro) {
         boolean status = false;
 
         return status;
     }
+
     public boolean delete(int id) {
         boolean status = false;
 
