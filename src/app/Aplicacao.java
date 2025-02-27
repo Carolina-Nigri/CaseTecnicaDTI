@@ -122,10 +122,73 @@ public class Aplicacao {
     }
 
     public static void atualizar(LivroDAO database) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        int id = -1;
+        
+        System.out.print("\nID do livro a atualizar: ");
+        try {
+            id = Integer.parseInt(br.readLine());
+        } catch (IOException ioe) {
+            System.err.println("Erro ao ler ID do livro\n");
+        }
 
+        Livro livro = database.select(id);
+
+        if(livro == null){
+            System.out.println("Livro não encontrado\n");
+        } else {
+            System.out.println(livro + "\n");
+
+            try {
+                System.out.println("Novo livro:");
+
+                System.out.print("Titulo: ");
+                livro.setTitulo(br.readLine());
+
+                System.out.print("Autor: ");
+                livro.setAutor(br.readLine());
+
+                System.out.print("Data de publicação: ");
+                livro.setDataPublicacao(formatter.parse(br.readLine()));
+                
+                System.out.print("Qtd de págs.: ");
+                livro.setQtdPaginas(Integer.parseInt(br.readLine()));
+        
+                System.out.print("Idioma: ");
+                livro.setIdioma(br.readLine());
+
+                System.out.print("Editora: ");
+                livro.setEditora(br.readLine());
+
+                if(database.update(livro))
+                    System.out.println("\nLivro atualizado com sucesso:\n" + livro + "\n");
+                else
+                    System.out.println("Erro ao atualizar livro.\n");
+
+            } catch (IOException ioe) {
+                System.err.println("Erro ao ler ID do livro.\n");
+            } catch (ParseException pe) {
+                System.err.println("Erro ao fazer parse da data.\n");
+            }     
+        }       
     }
 
     public static void deletar(LivroDAO database) {
+        System.out.print("\nID do livro a excluir: ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int id = -1;
+        
+        try {
+            id = Integer.parseInt(br.readLine());
+        } catch (IOException ioe) {
+            System.err.println("Erro ao ler ID do livro\n");
+        }
+
+        if(database.delete(id))
+            System.out.println("Livro de ID " + id + " excluído com sucesso.\n");
+        else
+            System.out.println("Erro ao excluir livro de ID " + id + ".\n");
 
     }
 }

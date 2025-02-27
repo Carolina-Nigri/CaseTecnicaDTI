@@ -131,12 +131,46 @@ public class LivroDAO extends DAO {
  
     public boolean update(Livro livro) {
         boolean status = false;
+        String sql = "UPDATE Livros SET titulo = ?, autor = ?, dataPublicacao = ?, qtdPaginas = ?, idioma = ?," +
+                     "editora = ? WHERE id = ?;";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            
+            stmt.setString(1, livro.getTitulo());
+            stmt.setString(2, livro.getAutor());
+            stmt.setString(3, formatter.format(livro.getDataPublicacao()));
+            stmt.setInt(4, livro.getQtdPaginas());
+            stmt.setString(5, livro.getIdioma());
+            stmt.setString(6, livro.getEditora());
+            stmt.setInt(7, livro.getId());
+
+            int colunasAlteradas = stmt.executeUpdate();	
+            if(colunasAlteradas > 0) {
+                status = true;
+            }
+
+            stmt.close();
+        } catch (SQLException sqle) {
+            System.err.println(sqle.getMessage());
+        }
 
         return status;
     }
 
     public boolean delete(int id) {
         boolean status = false;
+        String sql = "DELETE FROM Livros WHERE id = " + id;
+
+        try {
+            Statement stmt = conexao.createStatement();
+            stmt.executeUpdate(sql);	
+	        status = true;
+            stmt.close();
+        } catch (SQLException sqle) {
+            System.err.println(sqle.getMessage());
+        }
 
         return status;
     }
