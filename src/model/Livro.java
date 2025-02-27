@@ -1,9 +1,11 @@
 package src.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Livro {
     // Campos obrigatórios
+    private int id;
     private String titulo;
     private String autor;
     private Date dataPublicacao;
@@ -12,12 +14,14 @@ public class Livro {
     private String idioma;
     private String editora;
     
-    public Livro(String titulo, String autor, Date dataPublicacao) {
+    public Livro(int id, String titulo, String autor, Date dataPublicacao) {
+        this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.dataPublicacao = dataPublicacao;
     }
-    public Livro(String titulo, String autor, Date dataPublicacao, int qtdPaginas, String idioma, String editora) {
+    public Livro(int id, String titulo, String autor, Date dataPublicacao, int qtdPaginas, String idioma, String editora) {
+        this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.dataPublicacao = dataPublicacao;
@@ -61,5 +65,13 @@ public class Livro {
     }
     public void setEditora(String editora) {
         this.editora = editora;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat formattter = new SimpleDateFormat("YYYY-MM-DD");
+        String data = formattter.format(this.dataPublicacao);
+
+        return this.id + " | " + this.titulo + " | " + this.autor + " | " + data;
     }
 }

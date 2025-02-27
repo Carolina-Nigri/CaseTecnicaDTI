@@ -3,9 +3,14 @@ package src.app;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import src.dao.LivroDAO;
+import src.model.Livro;
 
 public class Aplicacao {
     public static void main(String[] args) {
+        LivroDAO database = new LivroDAO();
+
         int opcao = -1;
         
         do{
@@ -17,11 +22,11 @@ public class Aplicacao {
         
             switch (opcao) {
                 case 0 -> System.out.println("Fechando...");
-                case 1 -> listar();
-                case 2 -> buscar();
-                case 3 -> cadastrar();
-                case 4 -> atualizar();
-                case 5 -> deletar();
+                case 1 -> listar(database);
+                case 2 -> buscar(database);
+                case 3 -> cadastrar(database);
+                case 4 -> atualizar(database);
+                case 5 -> deletar(database);
                 default -> System.out.println("Opção inválida"); 
             }
         } while (opcao != 0);
@@ -29,7 +34,7 @@ public class Aplicacao {
 
     public static int menu() throws IOException {
         int opcao;
-        Boolean invalida;
+        boolean invalida;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         do{
@@ -51,23 +56,26 @@ public class Aplicacao {
        return opcao;
     }
 
-    public static void listar() {
+    public static void listar(LivroDAO database) {
+        List<Livro> livros = database.selectAll();
+        
+        if(livros.isEmpty()) System.out.println("Nenhum livro foi registrado ainda.\n");
+        else System.out.println(livros + "\n");
+    }
+
+    public static void buscar(LivroDAO database) {
 
     }
 
-    public static void buscar() {
+    public static void cadastrar(LivroDAO database) {
 
     }
 
-    public static void cadastrar() {
+    public static void atualizar(LivroDAO database) {
 
     }
 
-    public static void atualizar() {
-
-    }
-
-    public static void deletar() {
+    public static void deletar(LivroDAO database) {
 
     }
 }
