@@ -81,6 +81,6 @@ public class Livro {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String data = formatter.format(this.dataPublicacao);
 
-        return this.id + " | " + this.titulo + " | " + this.autor + " | " + data + " | " + this.qtdPaginas + " págs. | " + (this.idioma == null ? "Idioma desconhecido" : this.idioma) + " | " + (this.editora == null ? "Editora desconhecida" : this.editora);
+        return this.id + " | " + this.titulo + " | " + this.autor + " | " + data + " | " + this.qtdPaginas + " págs. | " + (this.idioma.isEmpty() ? "Idioma desconhecido" : this.idioma) + " | " + (this.editora.isEmpty() ? "Editora desconhecida" : this.editora);
     }
 }

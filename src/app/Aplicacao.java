@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import src.dao.LivroDAO;
 import src.model.Livro;
@@ -58,6 +59,57 @@ public class Aplicacao {
        return opcao;
     }
 
+    public static void lerLivro (Livro livro) throws IOException {
+        String input;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date data = null;
+        int qtdPaginas = 0;
+        
+        System.out.print("\nTítulo: ");
+        do {
+            input = br.readLine();
+            if(input.isBlank()) System.out.print("Título é obrigatório, não pode ser vazio: ");
+        } while(input.isBlank());
+        livro.setTitulo(input);
+
+        System.out.print("Autor: ");
+        do {
+            input = br.readLine();
+            if(input.isBlank()) System.out.print("Autor é obrigatório, não pode ser vazio: ");
+        } while(input.isBlank());
+        livro.setAutor(input);
+
+        System.out.print("Data de publicação [YYYY-MM-DD]: ");
+        do {
+            input = br.readLine();
+            if(input.isBlank()) System.out.print("Data de publicação é obrigatória, não pode ser vazia: ");
+
+            try {
+                data = formatter.parse(input);
+            } catch(ParseException pe) {
+                System.out.print("Formato inadequado da data, tente novamente: ");
+            }
+        } while(input.isBlank() || data == null);
+        livro.setDataPublicacao(data);
+        
+        System.out.print("Qtd de págs (opcional): ");
+        do {
+            input = br.readLine();
+            if(!input.isBlank()) qtdPaginas = Integer.parseInt(input);
+            if(qtdPaginas > 4000) System.out.print("Quantidade de páginas inválida (deve ser menor que 40000): ");
+        } while(qtdPaginas > 40000);
+        livro.setQtdPaginas(qtdPaginas);
+
+        System.out.print("Idioma (opcional): ");
+        input = br.readLine();
+        livro.setIdioma(input);
+
+        System.out.print("Editora (opcional): ");
+        input = br.readLine();
+        livro.setEditora(input);
+    }
+
     public static void listar(LivroDAO database) {
         List<Livro> livros = database.selectAll();
                
@@ -87,43 +139,21 @@ public class Aplicacao {
 
     public static void cadastrar(LivroDAO database) {
         Livro livro = new Livro();
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        
+
         try {
-            System.out.print("\nTitulo: ");
-            livro.setTitulo(br.readLine());
+            lerLivro(livro);
+        } catch(IOException ioe) {
+            System.err.println("Erro ao ler dados do livro.");
+        }
 
-            System.out.print("Autor: ");
-            livro.setAutor(br.readLine());
-
-            System.out.print("Data de publicação: ");
-            livro.setDataPublicacao(formatter.parse(br.readLine()));
-            
-            System.out.print("Qtd de págs.: ");
-            livro.setQtdPaginas(Integer.parseInt(br.readLine()));
-    
-            System.out.print("Idioma: ");
-            livro.setIdioma(br.readLine());
-
-            System.out.print("Editora: ");
-            livro.setEditora(br.readLine());
-
-            if(database.insert(livro))
-                System.out.println("\nLivro registrado com sucesso:\n" + livro + "\n");
-            else
-                System.out.println("Erro ao registrar livro.\n");
-
-        } catch (IOException ioe) {
-            System.err.println("Erro ao ler ID do livro.\n");
-        } catch (ParseException pe) {
-            System.err.println("Erro ao fazer parse da data.\n");
-        }            
+        if(database.insert(livro))
+            System.out.println("\nLivro registrado com sucesso:\n" + livro + "\n");
+        else
+            System.out.println("Erro ao registrar livro.\n");
     }
 
     public static void atualizar(LivroDAO database) {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         int id = -1;
         
         System.out.print("\nID do livro a atualizar: ");
@@ -139,38 +169,18 @@ public class Aplicacao {
             System.out.println("Livro não encontrado\n");
         } else {
             System.out.println(livro + "\n");
+            System.out.println("Novo livro:");
 
             try {
-                System.out.println("Novo livro:");
+                lerLivro(livro);
+            } catch(IOException ioe) {
+                System.err.println("Erro ao ler dados do livro.");
+            }
 
-                System.out.print("Titulo: ");
-                livro.setTitulo(br.readLine());
-
-                System.out.print("Autor: ");
-                livro.setAutor(br.readLine());
-
-                System.out.print("Data de publicação: ");
-                livro.setDataPublicacao(formatter.parse(br.readLine()));
-                
-                System.out.print("Qtd de págs.: ");
-                livro.setQtdPaginas(Integer.parseInt(br.readLine()));
-        
-                System.out.print("Idioma: ");
-                livro.setIdioma(br.readLine());
-
-                System.out.print("Editora: ");
-                livro.setEditora(br.readLine());
-
-                if(database.update(livro))
-                    System.out.println("\nLivro atualizado com sucesso:\n" + livro + "\n");
-                else
-                    System.out.println("Erro ao atualizar livro.\n");
-
-            } catch (IOException ioe) {
-                System.err.println("Erro ao ler ID do livro.\n");
-            } catch (ParseException pe) {
-                System.err.println("Erro ao fazer parse da data.\n");
-            }     
+            if(database.update(livro))
+                System.out.println("\nLivro atualizado com sucesso:\n" + livro + "\n");
+            else
+                System.out.println("Erro ao atualizar livro.\n");
         }       
     }
 
