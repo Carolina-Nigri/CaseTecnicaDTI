@@ -53,20 +53,15 @@ public class LivroDAO extends DAO {
         String sql = "SELECT * FROM Livros";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        try {
-            Statement stmt = conexao.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);	
-	        
-            while(rs.next()){            
-	        	Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
+        try (Statement stmt = conexao.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            while(rs.next()){
+                Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
                 livros.add(livro);
             }
-
-            stmt.close();
-        } catch (SQLException sqle) {
-            System.err.println(sqle.getMessage());
-        } catch (ParseException pe) {
-            System.err.println(pe.getMessage());
+        } catch (SQLException | ParseException e) {
+            System.err.println(e.getMessage());
         }
 
         return livros;
@@ -77,19 +72,14 @@ public class LivroDAO extends DAO {
         String sql = "SELECT * FROM Livros WHERE id = " + id;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        try {
-            Statement stmt = conexao.createStatement();
+        try (Statement stmt = conexao.createStatement()){
             ResultSet rs = stmt.executeQuery(sql);	
 	        
             if(rs.next()){            
 	        	livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
             }
-
-            stmt.close();
-        } catch (SQLException sqle) {
-            System.err.println(sqle.getMessage());
-        } catch (ParseException pe) {
-            System.err.println(pe.getMessage());
+        } catch (SQLException | ParseException e) {
+            System.err.println(e.getMessage());
         }
 
         return livro;
@@ -101,8 +91,7 @@ public class LivroDAO extends DAO {
                      "VALUES (?, ?, ?, ?, ?, ?);";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        try {
-            PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
@@ -120,8 +109,6 @@ public class LivroDAO extends DAO {
                     status = true;
                 }
             }
-
-            stmt.close();
         } catch (SQLException sqle) {
             System.err.println(sqle.getMessage());
         }
@@ -135,9 +122,7 @@ public class LivroDAO extends DAO {
                      "editora = ? WHERE id = ?;";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        try {
-            PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            
+        try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
             stmt.setString(3, formatter.format(livro.getDataPublicacao()));
@@ -150,8 +135,6 @@ public class LivroDAO extends DAO {
             if(colunasAlteradas > 0) {
                 status = true;
             }
-
-            stmt.close();
         } catch (SQLException sqle) {
             System.err.println(sqle.getMessage());
         }
@@ -163,11 +146,9 @@ public class LivroDAO extends DAO {
         boolean status = false;
         String sql = "DELETE FROM Livros WHERE id = " + id;
 
-        try {
-            Statement stmt = conexao.createStatement();
+        try (Statement stmt = conexao.createStatement()) {
             stmt.executeUpdate(sql);	
 	        status = true;
-            stmt.close();
         } catch (SQLException sqle) {
             System.err.println(sqle.getMessage());
         }

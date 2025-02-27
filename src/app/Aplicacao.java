@@ -18,7 +18,7 @@ public class Aplicacao {
         do{
             try {
                 opcao = menu();
-            } catch (Exception e) {
+            } catch (IOException ioe) {
                 System.err.println("Erro ao realizar leitura da opção.\n");
             }
         
