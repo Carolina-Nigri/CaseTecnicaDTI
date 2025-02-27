@@ -1,14 +1,14 @@
 package src.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Livro {
     // Campos obrigatórios
     private int id;
     private String titulo;
     private String autor;
-    private Date dataPublicacao;
+    private LocalDate dataPublicacao;
     // Campos opcionais
     private int qtdPaginas;
     private String idioma;
@@ -23,7 +23,7 @@ public class Livro {
         this.idioma = "";
         this.editora = "";
     }
-    public Livro(int id, String titulo, String autor, Date dataPublicacao, int qtdPaginas, String idioma, String editora) {
+    public Livro(int id, String titulo, String autor, LocalDate dataPublicacao, int qtdPaginas, String idioma, String editora) {
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
@@ -51,10 +51,10 @@ public class Livro {
     public void setAutor(String autor) {
         this.autor = autor;
     }
-    public Date getDataPublicacao() {
+    public LocalDate getDataPublicacao() {
         return dataPublicacao;
     }
-    public void setDataPublicacao(Date dataPublicacao) {
+    public void setDataPublicacao(LocalDate dataPublicacao) {
         this.dataPublicacao = dataPublicacao;
     }
     public int getQtdPaginas() {
@@ -78,8 +78,8 @@ public class Livro {
 
     @Override
     public String toString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String data = formatter.format(this.dataPublicacao);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String data = this.dataPublicacao.format(formatter);
 
         return this.id + " | " + this.titulo + " | " + this.autor + " | " + data + " | " + this.qtdPaginas + " págs. | " + (this.idioma.isEmpty() ? "Idioma desconhecido" : this.idioma) + " | " + (this.editora.isEmpty() ? "Editora desconhecida" : this.editora);
     }

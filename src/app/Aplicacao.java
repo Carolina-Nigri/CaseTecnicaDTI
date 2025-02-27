@@ -3,9 +3,9 @@ package src.app;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import src.dao.LivroDAO;
 import src.model.Livro;
@@ -40,20 +40,21 @@ public class Aplicacao {
         boolean invalida;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+        System.out.println("Aplicação - CRUD de Livros");
+        System.out.println("0 - Sair");
+        System.out.println("1 - Listar Livros");
+        System.out.println("2 - Buscar por ID");
+        System.out.println("3 - Cadastrar Livro");
+        System.out.println("4 - Atualizar Livro");
+        System.out.println("5 - Deletar Livro");
+
         do{
-            System.out.println("Aplicação - CRUD de Livros");
-            System.out.println("0 - Sair");
-            System.out.println("1 - Listar Livros");
-            System.out.println("2 - Buscar por ID");
-            System.out.println("3 - Cadastrar Livro");
-            System.out.println("4 - Atualizar Livro");
-            System.out.println("5 - Deletar Livro");
-            System.out.print("Digite uma opção (0 a 5): ");
+            System.out.print("\nDigite uma opção (0 a 5): ");
             
             opcao = Integer.parseInt(br.readLine());
             invalida = (opcao < 0) || (opcao > 5);
 
-            if(invalida) System.out.println("Opção inválida! Tente novamente.\n");
+            if(invalida) System.out.print("Opção inválida! Tente novamente.");
         } while(invalida);
 
        return opcao;
@@ -62,8 +63,8 @@ public class Aplicacao {
     public static void lerLivro (Livro livro) throws IOException {
         String input;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date data = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate data = null;
         int qtdPaginas = 0;
         
         System.out.print("\nTítulo: ");
@@ -86,19 +87,19 @@ public class Aplicacao {
             if(input.isBlank()) System.out.print("Data de publicação é obrigatória, não pode ser vazia: ");
 
             try {
-                data = formatter.parse(input);
-            } catch(ParseException pe) {
+                data = LocalDate.parse(input, formatter);
+            } catch (DateTimeParseException e) {
                 System.out.print("Formato inadequado da data, tente novamente: ");
             }
         } while(input.isBlank() || data == null);
         livro.setDataPublicacao(data);
         
-        System.out.print("Qtd de págs (opcional): ");
+        System.out.print("Qtd de págs [0 a 40000] (opcional): ");
         do {
             input = br.readLine();
             if(!input.isBlank()) qtdPaginas = Integer.parseInt(input);
-            if(qtdPaginas > 4000) System.out.print("Quantidade de páginas inválida (deve ser menor que 40000): ");
-        } while(qtdPaginas > 40000);
+            if(qtdPaginas < 0 || qtdPaginas > 40000) System.out.print("Quantidade de páginas inválida (deve estar entre 0 e 40000): ");
+        } while(qtdPaginas < 0 || qtdPaginas > 40000);
         livro.setQtdPaginas(qtdPaginas);
 
         System.out.print("Idioma (opcional): ");
@@ -114,7 +115,7 @@ public class Aplicacao {
         List<Livro> livros = database.selectAll();
                
         if(livros.isEmpty()){
-            System.out.println("Nenhum livro foi registrado ainda.\n");
+            System.out.println("\nNenhum livro foi registrado ainda.\n");
         } else {
             System.out.println("");
             livros.forEach(livro -> System.out.println(livro));

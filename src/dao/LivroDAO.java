@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import src.model.Livro;
@@ -51,16 +51,16 @@ public class LivroDAO extends DAO {
     public List<Livro> selectAll() {
         List<Livro> livros = new ArrayList<>();
         String sql = "SELECT * FROM Livros";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
         try (Statement stmt = conexao.createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
             
             while(rs.next()){
-                Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
+                Livro livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), LocalDate.parse(rs.getString("dataPublicacao"), formatter), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
                 livros.add(livro);
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
 
@@ -70,15 +70,15 @@ public class LivroDAO extends DAO {
     public Livro select(int id) {
         Livro livro = null;
         String sql = "SELECT * FROM Livros WHERE id = " + id;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
         try (Statement stmt = conexao.createStatement()){
             ResultSet rs = stmt.executeQuery(sql);	
 	        
             if(rs.next()){            
-	        	livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), formatter.parse(rs.getString("dataPublicacao")), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
+	        	livro = new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"), LocalDate.parse(rs.getString("dataPublicacao"), formatter), rs.getInt("qtdPaginas"), rs.getString("idioma"), rs.getString("editora"));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
 
@@ -89,13 +89,13 @@ public class LivroDAO extends DAO {
         boolean status = false;
         String sql = "INSERT INTO Livros (titulo, autor, dataPublicacao, qtdPaginas, idioma, editora) " +
                      "VALUES (?, ?, ?, ?, ?, ?);";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
         try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
-            stmt.setString(3, formatter.format(livro.getDataPublicacao()));
+            stmt.setString(3, livro.getDataPublicacao().format(formatter));
             stmt.setInt(4, livro.getQtdPaginas());
             stmt.setString(5, livro.getIdioma());
             stmt.setString(6, livro.getEditora());
@@ -120,12 +120,13 @@ public class LivroDAO extends DAO {
         boolean status = false;
         String sql = "UPDATE Livros SET titulo = ?, autor = ?, dataPublicacao = ?, qtdPaginas = ?, idioma = ?," +
                      "editora = ? WHERE id = ?;";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
-            stmt.setString(3, formatter.format(livro.getDataPublicacao()));
+            stmt.setString(3, livro.getDataPublicacao().format(formatter));
             stmt.setInt(4, livro.getQtdPaginas());
             stmt.setString(5, livro.getIdioma());
             stmt.setString(6, livro.getEditora());
