@@ -2,6 +2,7 @@
 Este README apresenta e detalha a aplicação desenvolvida para a case técnica da dti digital.
 
 Autora: Carolina Morais Nigri
+
 Data: 28/02/2025
 
 ## Descrição inicial da aplicação
@@ -74,10 +75,10 @@ Digite uma opção (0 a 5):
 Ao escolher a opção 1, os livros registrados no banco de dados são mostrados no console, conforme exemplo:
 
 ```
-1 | Dino Lernt Deutsch 1 | Andre Klein | 2013-12-11 | 96 | Idioma desconhecido | Editora desconhecida
-2 | O Ladrão de Raios - Percy Jackson e os Olimpianos 1 | Rick Riordan | 2014-08-14 | 400 | Português | Intrínseca
-3 | Harry Potter e a Pedra Filosofal | J.K. Rowling | 2015-12-08 | 312 | Português | Pottermore Publishing
-4 | Le Comte de Monte-Cristo | Alexandre Dumas | 1846-01-15 | 1304 | Francês | Editora desconhecida
+1 | Dino Lernt Deutsch 1 | Andre Klein | 2013-12-11 | 96 págs. | Idioma desconhecido | Editora desconhecida
+2 | O Ladrão de Raios - Percy Jackson e os Olimpianos 1 | Rick Riordan | 2014-08-14 | 400 págs. | Português | Intrínseca
+3 | Harry Potter e a Pedra Filosofal | J.K. Rowling | 2015-12-08 | 312 págs. | Português | Pottermore Publishing
+4 | Le Comte de Monte-Cristo | Alexandre Dumas | 1846-01-15 | 1304 págs. | Francês | Editora desconhecida
 5 | A Biblioteca da Meia-Noite | Matt Haig | 2021-09-27 | Número de páginas desconhecido | Idioma desconhecido | Editora desconhecida
 ```
 
@@ -93,7 +94,7 @@ ID inválido, tente novamente ou cancele operação (0):
 
 ```
 ID do livro [> 0]: 3
-3 | Harry Potter e a Pedra Filosofal | J.K. Rowling | 2015-12-08 | 312 | Português | Pottermore Publishing
+3 | Harry Potter e a Pedra Filosofal | J.K. Rowling | 2015-12-08 | 312 págs. | Português | Pottermore Publishing
 ```
 
 ```
@@ -114,7 +115,7 @@ Idioma (opcional): English
 Editora (opcional): Bloomsbury Childrens Books
 
 Livro registrado com sucesso:
-8 | Harry Potter and the Philosopher's Stone | J. K. Rowling | 2014-09-01 | 352 | English | Bloomsbury Childrens Books
+8 | Harry Potter and the Philosopher's Stone | J. K. Rowling | 2014-09-01 | 352 págs. | English | Bloomsbury Childrens Books
 ```
 
 Os dados são consistidos e verificados para cada atributo do `Livro`, conforme seguintes restrições:
@@ -131,7 +132,7 @@ O ID é verificado da mesma forma que na opção de busca por ID e, após encont
 
 ```
 Livro atualizado com sucesso:
-1 | Dino Lernt Deutsch 1 | Andre Klein | 2013-12-11 | 96 | Idioma desconhecido | Editora desconhecida
+1 | Dino Lernt Deutsch 1 | Andre Klein | 2013-12-11 | 96 págs. | Idioma desconhecido | Editora desconhecida
 ```
 
 ### Deletar Livro
@@ -162,7 +163,7 @@ Feito isso, acrescente o Java nas variáveis de ambiente:
 1.	Procure `Editar as variáveis de ambiente do sistema` nas configurações.
 2.	Clique em `Variáveis de Ambiente...`.
 3.	Clique no botão `Novo...` em Variáveis do sistema.
-4.	Acrescente a variável `JAVA_HOME` e preencha com o caminho para a pasta java: `C:\Program Files\Java\jdk-23\`.
+4.	Acrescente a variável `JAVA_HOME` e preencha com o caminho para a pasta do java: `C:\Program Files\Java\jdk-23\`.
 5.	Em Variáveis do sistema localize a variável `Path`, clique nela e em `Editar...`.
 6.	Clique em `Novo` e acrescente o caminho da pasta bin do java: `C:\Program Files\Java\jdk-23\bin`.
 7.	Clique em OK e o caminho para o Java estará configurado. 	
@@ -178,7 +179,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)
 Para instalar o SQLite, na versão 3.49.1, navegue até a página [Download SQLite](https://www.sqlite.org/download.html) e baixe o `Precompiled Binaries` referente ao seu sistema operacional.
 Extraia o conteúdo do arquivo baixado (`sqlite-tools-win-x64-3490100.zip`, por exemplo) para uma pasta de sua escolha, de preferência para `C:\sqlite3`.
 
-Após isso feito, acrescente o SQLite nas variáveis de ambiente, para isso:
+Feito isso, acrescente o SQLite nas variáveis de ambiente:
 
 1.	Procure `Editar as variáveis de ambiente do sistema` nas configurações.
 2.	Clique em `Variáveis de Ambiente...`.
