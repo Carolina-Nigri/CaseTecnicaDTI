@@ -36,7 +36,7 @@ public class Aplicacao {
     }
 
     public static int menu() throws IOException {
-        int opcao;
+        int opcao = -1;
         boolean invalida;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -51,9 +51,13 @@ public class Aplicacao {
         do{
             System.out.print("\nDigite uma opção (0 a 5): ");
             
-            opcao = Integer.parseInt(br.readLine());
+            try {
+                opcao = Integer.parseInt(br.readLine());
+            } catch (NumberFormatException nfe) {
+                System.out.println("Formato do número inválido.");
+            } 
+   
             invalida = (opcao < 0) || (opcao > 5);
-
             if(invalida) System.out.print("Opção inválida! Tente novamente.");
         } while(invalida);
 
@@ -84,22 +88,37 @@ public class Aplicacao {
         System.out.print("Data de publicação [YYYY-MM-DD]: ");
         do {
             input = br.readLine();
-            if(input.isBlank()) System.out.print("Data de publicação é obrigatória, não pode ser vazia: ");
 
-            try {
-                data = LocalDate.parse(input, formatter);
-            } catch (DateTimeParseException e) {
-                System.out.print("Formato inadequado da data, tente novamente: ");
+            if(input.isBlank()) {
+                System.out.print("Data de publicação é obrigatória, não pode ser vazia: ");
+            } else {
+                try {
+                    data = LocalDate.parse(input, formatter);
+                } catch (DateTimeParseException e) {
+                    System.out.print("Formato inadequado da data, tente novamente: ");
+                }
             }
         } while(input.isBlank() || data == null);
         livro.setDataPublicacao(data);
         
         System.out.print("Qtd de págs [0 a 40000] (opcional): ");
+        boolean invalido;
         do {
+            invalido = false;
             input = br.readLine();
-            if(!input.isBlank()) qtdPaginas = Integer.parseInt(input);
-            if(qtdPaginas < 0 || qtdPaginas > 40000) System.out.print("Quantidade de páginas inválida (deve estar entre 0 e 40000): ");
-        } while(qtdPaginas < 0 || qtdPaginas > 40000);
+
+            
+            if(!input.isBlank()){
+                try {
+                    qtdPaginas = Integer.parseInt(input);
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Formato do número inválido.");
+                    invalido = true;
+                } 
+            } 
+
+            if(invalido || qtdPaginas < 0 || qtdPaginas > 40000) System.out.print("Quantidade de páginas inválida (deve estar entre 0 e 40000): ");
+        } while(invalido || qtdPaginas < 0 || qtdPaginas > 40000);
         livro.setQtdPaginas(qtdPaginas);
 
         System.out.print("Idioma (opcional): ");
@@ -124,18 +143,25 @@ public class Aplicacao {
     }
 
     public static void buscar(LivroDAO database) {
-        System.out.print("\nID do livro: ");
+        System.out.print("\nID do livro [> 0]: ");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int id = -1;
         
-        try {
-            id = Integer.parseInt(br.readLine());
-        } catch (IOException ioe) {
-            System.err.println("Erro ao ler ID do livro\n");
-        }
+        do{
+            try {
+                id = Integer.parseInt(br.readLine());
+            } catch (IOException ioe) {
+                System.err.println("Erro ao ler ID do livro.");
+            } catch (NumberFormatException nfe) {
+                System.out.println("Formato do número inválido.");
+            } 
+            if(id < 0) System.out.print("ID inválido, tente novamente ou cancele operação (0): ");
+        } while(id < 0);
 
-        Livro livro = database.select(id);
-        System.out.println( (livro == null ? "Livro não encontrado" : livro) + "\n");
+        if(id > 0){
+            Livro livro = database.select(id);
+            System.out.println( (livro == null ? "Livro não encontrado" : livro) + "\n");
+        }
     }
 
     public static void cadastrar(LivroDAO database) {
@@ -157,49 +183,63 @@ public class Aplicacao {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int id = -1;
         
-        System.out.print("\nID do livro a atualizar: ");
-        try {
-            id = Integer.parseInt(br.readLine());
-        } catch (IOException ioe) {
-            System.err.println("Erro ao ler ID do livro\n");
-        }
-
-        Livro livro = database.select(id);
-
-        if(livro == null){
-            System.out.println("Livro não encontrado\n");
-        } else {
-            System.out.println(livro + "\n");
-            System.out.println("Novo livro:");
-
+        System.out.print("\nID do livro a atualizar [> 0]: ");
+        do{
             try {
-                lerLivro(livro);
-            } catch(IOException ioe) {
-                System.err.println("Erro ao ler dados do livro.");
-            }
+                id = Integer.parseInt(br.readLine());
+            } catch (IOException ioe) {
+                System.err.println("Erro ao ler ID do livro.");
+            } catch (NumberFormatException nfe) {
+                System.out.println("Formato do número inválido.");
+            } 
+            if(id < 0) System.out.print("ID inválido, tente novamente ou cancele operação (0): ");
+        } while(id < 0);
 
-            if(database.update(livro))
-                System.out.println("\nLivro atualizado com sucesso:\n" + livro + "\n");
-            else
-                System.out.println("Erro ao atualizar livro.\n");
-        }       
+        Livro livro;
+
+        if(id > 0){
+            livro = database.select(id);
+            
+            if(livro == null){
+                System.out.println("Livro não encontrado\n");
+            } else {
+                System.out.println(livro + "\n");
+                System.out.println("Novo livro:");
+    
+                try {
+                    lerLivro(livro);
+                } catch(IOException ioe) {
+                    System.err.println("Erro ao ler dados do livro.");
+                }
+    
+                if(database.update(livro))
+                    System.out.println("\nLivro atualizado com sucesso:\n" + livro + "\n");
+                else
+                    System.out.println("Erro ao atualizar livro.\n");
+            }       
+        } 
     }
 
     public static void deletar(LivroDAO database) {
-        System.out.print("\nID do livro a excluir: ");
+        System.out.print("\nID do livro a excluir [> 0]: ");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int id = -1;
         
-        try {
-            id = Integer.parseInt(br.readLine());
-        } catch (IOException ioe) {
-            System.err.println("Erro ao ler ID do livro\n");
-        }
+        do{
+            try {
+                id = Integer.parseInt(br.readLine());
+            } catch (IOException ioe) {
+                System.err.println("Erro ao ler ID do livro.");
+            } catch (NumberFormatException nfe) {
+                System.out.println("Formato do número inválido.");
+            } 
+            if(id < 0) System.out.print("ID inválido, tente novamente ou cancele operação (0): ");
+        } while(id < 0);
 
-        if(database.delete(id))
-            System.out.println("Livro de ID " + id + " excluído com sucesso.\n");
-        else
-            System.out.println("Erro ao excluir livro de ID " + id + ".\n");
+        if(id > 0){
+            if(database.delete(id)) System.out.println("Livro de ID " + id + " excluído com sucesso.\n");
+            else System.out.println("Erro ao excluir livro de ID " + id + ".\n");
+        }
 
     }
 }
